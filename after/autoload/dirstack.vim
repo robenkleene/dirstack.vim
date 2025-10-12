@@ -1,4 +1,4 @@
-function! s:PushDirEvent(event) abort
+function! dirstack:DirChanged(event) abort
   let l:old = get(a:event, 'old_cwd', '')
   let l:local = get(a:event, 'scope', '') !== 'window')
   if l:local
@@ -8,7 +8,7 @@ function! s:PushDirEvent(event) abort
   endif
 endfunction
 
-function! s:StackAdd(dir) abort
+function! dirstack:pushd(dir, cd = 0) abort
   if empty(dir)
     return
   endif
@@ -17,12 +17,15 @@ function! s:StackAdd(dir) abort
     return
   endif
   call add(g:dir_stack, dir)
-  if len(g:dir_stack) > 50
+  if len(g:dir_stack) > 20
     call remove(g:dir_stack, 0)
+  endif
+  if a:cd
+    execute 'cd' fnameescape(dir)
   endif
 endfunction
 
-function! s:LstackAdd(dir) abort
+function! dirstack:lpushd(dir, cd = 0) abort
   if empty(dir)
     return
   endif
@@ -31,33 +34,28 @@ function! s:LstackAdd(dir) abort
     return
   endif
   call add(b:dir_stack, dir)
-  if len(b:dir_stack) > 50
+  if len(b:dir_stack) > 20
     call remove(b:dir_stack, 0)
   endif
-endfunction
-
-function! s:Lpushd(dir) abort
-  if !exists('b:dir_stack')
-    let b:dir_stack = []
-  endif
-  if !empty(a:dir)
-    execute 'lcd' fnameescape(a:dir)
+  if a:cd
+    execute 'lcd' fnameescape(dir)
   endif
 endfunction
 
-function! s:Ldirstack() abort
-  if !exists('b:dir_stack') || empty(b:dir_stack)
-    echo "[]"
-  else
-    echo b:dir_stack
+function! dirstack:popd() abort
+  if empty(b:dir_stack)
+    echohl WarningMsg | echo "Dir stack is empty" | echohl None
+    return
   endif
+  let dir = remove(g:dir_stack, -1)
+  execute 'cd' fnameescape(dir)
 endfunction
 
-function! s:Lpopd() abort
-  if !exists('b:dir_stack') || empty(b:dir_stack)
+function! dirstack:lpopd() abort
+  if empty(b:dir_stack)
     echohl WarningMsg | echo "Local dir stack is empty for this buffer" | echohl None
     return
   endif
-  let target = remove(b:dir_stack, -1)
-  execute 'lcd' fnameescape(target)
+  let dir = remove(b:dir_stack, -1)
+  execute 'lcd' fnameescape(dir)
 endfunction

@@ -1,19 +1,19 @@
-let g:dir_stack = []
+command! -nargs=1 -complete=dir Pushd call dirstack:pushd(dir, 1)
+command! -nargs=1 -complete=dir Lpushd call dirstack:lpushd(dir, 1)
 
-command! -nargs=? Pushd call add(g:dir_stack, getcwd()) | if !empty(<q-args>) | exe 'cd' <q-args> | endif
-command! Popd if !empty(g:dir_stack) | exe 'cd' remove(g:dir_stack, -1) | endif
 command! Dirstack echo g:dir_stack
-command! -nargs=? -complete=dir Lpushd call s:Lpushd(<q-args>)
-command! Lpopd call s:Lpopd()
-command! Ldirstack call s:Ldirstack()
+command! Ldirstack echo b:dir_stack
+
+command! Lpopd call dirstack:lpopd()
+command! Popd call dirstack:popd()
 
 augroup DirStack
   autocmd!
-  autocmd DirChanged * call s:PushDir(v:event)
-  autocmd DirChanged window call s:BufPushDir(v:event)
+  autocmd DirChanged * call s:DirChangedEvent(v:event)
 augroup END
 
-augroup LocalDirStackInit
+let g:dir_stack = []
+augroup LocalDirStack
   autocmd!
   autocmd BufReadPost,BufNewFile * if !exists('b:dir_stack') | let b:dir_stack = [] | endif
 augroup END
