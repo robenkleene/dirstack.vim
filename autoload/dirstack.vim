@@ -54,7 +54,7 @@ function! dirstack#popd() abort
     return
   endif
   let dir = remove(g:dir_stack, -1)
-  execute 'cd' fnameescape(dir)
+  execute 'cd ' . fnameescape(dir)
 endfunction
 
 function! dirstack#lpopd() abort
@@ -63,5 +63,5 @@ function! dirstack#lpopd() abort
     return
   endif
   let dir = remove(b:dir_stack, -1)
-  execute 'lcd' fnameescape(dir)
+  execute 'lcd ' . fnameescape(dir)
 endfunction
