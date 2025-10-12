@@ -3,28 +3,27 @@ function! s:PushDir(event)
   if has_key(a:event, 'old_cwd') && a:event.old_cwd !=# ''
     call add(g:dir_stack, a:event.old_cwd)
   endif
+
+  if len(g:dir_stack) > 50
+    call remove(g:dir_stack, 0)
+  endif
 endfunction
 
-function! s:BufPushOldCwd(ev) abort
-  " Only handle window-local changes (i.e., :lcd)
+function! s:BufPushDir(ev) abort
   if get(a:ev, 'scope', '') !=# 'window'
     return
   endif
-  " Ensure the current buffer has a stack
-  if !exists('b:dir_stack')
-    let b:dir_stack = []
-  endif
+
   let old = get(a:ev, 'old_cwd', '')
   if empty(old)
     return
   endif
-  " Avoid consecutive duplicates
+
   if !empty(b:dir_stack) && b:dir_stack[-1] ==# old
     return
   endif
   call add(b:dir_stack, old)
 
-  " (Optional) cap the stack size
   if len(b:dir_stack) > 50
     call remove(b:dir_stack, 0)
   endif
