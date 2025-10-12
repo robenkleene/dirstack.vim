@@ -2,13 +2,13 @@ function! dirstack#DirChanged(event) abort
   let l:old = get(a:event, 'old_cwd', '')
   let l:local = get(a:event, 'scope', '') ==# 'window'
   if l:local
-    call dirstack#lpushd(l:old, 0)
+    call dirstack#lpushd(l:old)
   else
-    call dirstack#pushd(l:old, 0)
+    call dirstack#pushd(l:old)
   endif
 endfunction
 
-function! dirstack#pushd(dir, cd) abort
+function! dirstack#pushd(dir, cd = 0) abort
   if empty(a:dir)
     return
   endif
@@ -23,13 +23,12 @@ function! dirstack#pushd(dir, cd) abort
   if len(g:dir_stack) > 20
     call remove(g:dir_stack, 0)
   endif
-  let l:cd = (a:0 >= 2 ? a:cd : 0)
-  if l:cd
+  if a:cd
     execute 'cd ' . fnameescape(a:dir)
   endif
 endfunction
 
-function! dirstack#lpushd(dir, cd) abort
+function! dirstack#lpushd(dir, cd = 0) abort
   if empty(a:dir)
     return
   endif
@@ -44,8 +43,7 @@ function! dirstack#lpushd(dir, cd) abort
   if len(b:dir_stack) > 20
     call remove(b:dir_stack, 0)
   endif
-  let l:cd = (a:0 >= 2 ? a:cd : 0)
-  if l:cd
+  if a:cd
     execute 'lcd ' . fnameescape(a:dir)
   endif
 endfunction
