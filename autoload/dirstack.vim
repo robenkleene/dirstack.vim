@@ -25,7 +25,7 @@ function! dirstack#pushd(dir, cd) abort
   endif
   let l:cd = (a:0 >= 2 ? a:cd : 0)
   if l:cd
-    execute 'cd' fnameescape(a:dir)
+    execute 'cd ' . fnameescape(a:dir)
   endif
 endfunction
 
@@ -46,7 +46,7 @@ function! dirstack#lpushd(dir, cd) abort
   endif
   let l:cd = (a:0 >= 2 ? a:cd : 0)
   if l:cd
-    execute 'lcd' fnameescape(a:dir)
+    execute 'lcd ' . fnameescape(a:dir)
   endif
 endfunction
 

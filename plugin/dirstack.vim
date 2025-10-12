@@ -1,8 +1,8 @@
 command! -nargs=1 -complete=dir Pushd call dirstack#pushd(<f-args>, 1)
 command! -nargs=1 -complete=dir Lpushd call dirstack#lpushd(<f-args>, 1)
 
-command! Dirstack echo g:dir_stack
-command! Ldirstack echo b:dir_stack
+command! Dirstack echo get(g:, 'dir_stack', [])
+command! Ldirstack echo get(b:, 'dir_stack', [])
 
 command! Lpopd call dirstack#lpopd()
 command! Popd call dirstack#popd()
