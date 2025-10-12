@@ -15,16 +15,17 @@ function! dirstack#pushd(dir, cd = 0) abort
   if !exists('g:dir_stack') || type(g:dir_stack) != type([])
     let g:dir_stack = []
   endif
-  " Don't add dups
-  if !empty(g:dir_stack) && g:dir_stack[-1] ==# a:dir
+  " Normalize to absolute, simplified path and don't add dups
+  let l:dir = simplify(fnamemodify(a:dir, ':p'))
+  if !empty(g:dir_stack) && g:dir_stack[-1] ==# l:dir
     return
   endif
-  call add(g:dir_stack, a:dir)
+  call add(g:dir_stack, l:dir)
   if len(g:dir_stack) > 20
     call remove(g:dir_stack, 0)
   endif
   if a:cd
-    execute 'cd ' . fnameescape(a:dir)
+    execute 'cd ' . fnameescape(l:dir)
   endif
 endfunction
 
@@ -35,16 +36,17 @@ function! dirstack#lpushd(dir, cd = 0) abort
   if !exists('b:dir_stack') || type(b:dir_stack) != type([])
     let b:dir_stack = []
   endif
-  " Don't add dups
-  if !empty(b:dir_stack) && b:dir_stack[-1] ==# a:dir
+  " Normalize to absolute, simplified path and don't add dups
+  let l:dir = simplify(fnamemodify(a:dir, ':p'))
+  if !empty(b:dir_stack) && b:dir_stack[-1] ==# l:dir
     return
   endif
-  call add(b:dir_stack, a:dir)
+  call add(b:dir_stack, l:dir)
   if len(b:dir_stack) > 20
     call remove(b:dir_stack, 0)
   endif
   if a:cd
-    execute 'lcd ' . fnameescape(a:dir)
+    execute 'lcd ' . fnameescape(l:dir)
   endif
 endfunction
 
