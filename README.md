@@ -4,13 +4,11 @@ A directory stack for Vim like in [Bash](https://www.gnu.org/software/bash/manua
 
 ## `cd`
 
-- `:Pushd {dir}`: Push and `:cd`
 - `:Popd`: Pop and `:cd`
 - `:Dirstack`: Echo global stack
 
 ## `lcd`
 
-- `:Lpushd {dir}`: Push and `:lcd`
 - `:Lpopd`: Pop and `:lcd`
 - `:Ldirstack`: Echo local stack
 

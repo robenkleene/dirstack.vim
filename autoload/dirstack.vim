@@ -1,21 +1,10 @@
-function! dirstack#DirChanged(event) abort
-  let l:old = get(a:event, 'old_cwd', '')
-  let l:local = get(a:event, 'scope', '') ==# 'window'
-  if l:local
-    call dirstack#lpushd(l:old)
-  else
-    call dirstack#pushd(l:old)
-  endif
-endfunction
-
-function! dirstack#pushd(dir, cd = 0) abort
+function! dirstack#pushd(dir) abort
   if empty(a:dir)
     return
   endif
   if !exists('g:dir_stack') || type(g:dir_stack) != type([])
     let g:dir_stack = []
   endif
-  " Normalize to absolute, simplified path and don't add dups
   let l:dir = simplify(fnamemodify(a:dir, ':p'))
   if !empty(g:dir_stack) && g:dir_stack[-1] ==# l:dir
     return
@@ -24,12 +13,9 @@ function! dirstack#pushd(dir, cd = 0) abort
   if len(g:dir_stack) > 20
     call remove(g:dir_stack, 0)
   endif
-  if a:cd
-    execute 'cd ' . fnameescape(l:dir)
-  endif
 endfunction
 
-function! dirstack#lpushd(dir, cd = 0) abort
+function! dirstack#lpushd(dir) abort
   if empty(a:dir)
     return
   endif
@@ -44,9 +30,6 @@ function! dirstack#lpushd(dir, cd = 0) abort
   call add(b:dir_stack, l:dir)
   if len(b:dir_stack) > 20
     call remove(b:dir_stack, 0)
-  endif
-  if a:cd
-    execute 'lcd ' . fnameescape(l:dir)
   endif
 endfunction
 

@@ -1,6 +1,3 @@
-command! -nargs=1 -complete=dir Pushd call dirstack#pushd(<f-args>, 1)
-command! -nargs=1 -complete=dir Lpushd call dirstack#lpushd(<f-args>, 1)
-
 command! Dirstack echo get(g:, 'dir_stack', [])
 command! Ldirstack echo get(b:, 'dir_stack', [])
 
@@ -9,7 +6,8 @@ command! Popd call dirstack#popd()
 
 augroup DirStack
   autocmd!
-  autocmd DirChanged * call dirstack#DirChanged(v:event)
+  autocmd DirChangedPre global call dirstack#pushd(getcwd())
+  autocmd DirChangedPre window call dirstack#lpushd(getcwd())
 augroup END
 
 if !exists('g:dir_stack')
