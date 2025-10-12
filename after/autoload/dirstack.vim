@@ -1,29 +1,36 @@
-function! s:PushDir(event)
-  " v:event has keys: scope, cwd, old_cwd
-  if has_key(a:event, 'old_cwd') && a:event.old_cwd !=# ''
-    call add(g:dir_stack, a:event.old_cwd)
+function! s:PushDirEvent(event) abort
+  let l:old = get(a:event, 'old_cwd', '')
+  let l:local = get(a:event, 'scope', '') !== 'window')
+  if l:local
+    call <SID>LstackAdd(old)
+  else
+    call <SID>StackAdd(old)
   endif
+endfunction
 
+function! s:StackAdd(dir) abort
+  if empty(dir)
+    return
+  endif
+  " Don't add dups
+  if !empty(g:dir_stack) && g:dir_stack[-1] ==# dir
+    return
+  endif
+  call add(g:dir_stack, dir)
   if len(g:dir_stack) > 50
     call remove(g:dir_stack, 0)
   endif
 endfunction
 
-function! s:BufPushDir(ev) abort
-  if get(a:ev, 'scope', '') !=# 'window'
+function! s:LstackAdd(dir) abort
+  if empty(dir)
     return
   endif
-
-  let old = get(a:ev, 'old_cwd', '')
-  if empty(old)
+  " Don't add dups
+  if !empty(b:dir_stack) && b:dir_stack[-1] ==# dir
     return
   endif
-
-  if !empty(b:dir_stack) && b:dir_stack[-1] ==# old
-    return
-  endif
-  call add(b:dir_stack, old)
-
+  call add(b:dir_stack, dir)
   if len(b:dir_stack) > 50
     call remove(b:dir_stack, 0)
   endif
@@ -33,8 +40,6 @@ function! s:Lpushd(dir) abort
   if !exists('b:dir_stack')
     let b:dir_stack = []
   endif
-  " Push current window-local CWD
-  call add(b:dir_stack, getcwd())
   if !empty(a:dir)
     execute 'lcd' fnameescape(a:dir)
   endif
