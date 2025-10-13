@@ -14,7 +14,7 @@ function! dirstack#pushd(dir, new = "") abort
   endif
 
   if !empty(a:new)
-    let simplify(fnamemodify(a:new, ':p'))
+    let l:new = simplify(fnamemodify(a:new, ':p'))
     " If going back to top directory pop and do nothing
     " This treats going back to a directory as a manual pop, so `cd -` is
     " treated as a pop and a subsequent `:Popd` will then go back further in
