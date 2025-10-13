@@ -67,7 +67,9 @@ function! dirstack#popd() abort
     echohl WarningMsg | echo "Dir stack is empty" | echohl None
     return
   endif
-  let dir = remove(g:dir_stack, -1)
+  " Don't remove on a pop, `pushd` removes, if a remove here the destination
+  " will get re-added to the stack
+  let dir = get(g:dir_stack, -1)
   execute 'cd ' . fnameescape(dir)
 endfunction
 
@@ -76,6 +78,8 @@ function! dirstack#lpopd() abort
     echohl WarningMsg | echo "Local dir stack is empty for this buffer" | echohl None
     return
   endif
-  let dir = remove(b:dir_stack, -1)
+  " Don't remove on a pop, `pushd` removes, if a remove here the destination
+  " will get re-added to the stack
+  let dir = get(b:dir_stack, -1)
   execute 'lcd ' . fnameescape(dir)
 endfunction
