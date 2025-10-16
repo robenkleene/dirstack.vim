@@ -66,6 +66,40 @@ function! dirstack#lpushd(dir, new = "") abort
   endif
 endfunction
 
+function! dirstack#tpushd(dir, new = "") abort
+  if empty(a:dir)
+    return
+  endif
+  if !exists('t:dir_stack') || type(t:dir_stack) != type([])
+    let t:dir_stack = []
+  endif
+
+  let l:dir = simplify(fnamemodify(a:dir, ':p'))
+  let l:top = empty(t:dir_stack) ? "" : t:dir_stack[-1]
+  " Don't add dups
+  if l:top ==# l:dir
+    return
+  endif
+
+  if !empty(a:new)
+    let l:new = simplify(fnamemodify(a:new, ':p'))
+    " If going back to top directory pop and do nothing
+    " This treats going back to a directory as a manual pop, so `cd -` is
+    " treated as a pop and a subsequent `:Popd` will then go back further in
+    " history
+    if l:top ==# l:new
+      call remove(t:dir_stack, -1)
+      return
+    endif
+  endif
+
+  call add(t:dir_stack, l:dir)
+
+  if len(t:dir_stack) > 20
+    call remove(t:dir_stack, 0)
+  endif
+endfunction
+
 function! dirstack#popd() abort
   if !exists('g:dir_stack')
     echohl WarningMsg | echo "Dir stack is empty" | echohl None
@@ -106,4 +140,25 @@ function! dirstack#lpopd() abort
   " will get re-added to the stack
   let dir = b:dir_stack[-1]
   execute 'lcd ' . fnameescape(dir)
+endfunction
+
+function! dirstack#tpopd() abort
+  if !exists('t:dir_stack')
+    echohl WarningMsg | echo "Local dir stack is empty for this buffer" | echohl None
+    return
+  endif
+
+  while !empty(t:dir_stack) && !isdirectory(t:dir_stack[-1])
+    call remove(t:dir_stack, -1)
+  endwhile
+
+  if empty(t:dir_stack)
+    echohl WarningMsg | echo "Local dir stack is empty for this buffer" | echohl None
+    return
+  endif
+
+  " Don't remove on a pop, `pushd` removes, if a remove here the destination
+  " will get re-added to the stack
+  let dir = t:dir_stack[-1]
+  execute 'tcd ' . fnameescape(dir)
 endfunction
