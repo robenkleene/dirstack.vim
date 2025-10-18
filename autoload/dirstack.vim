@@ -104,7 +104,7 @@ endfunction
 
 function! dirstack#tpopd() abort
   if !exists('t:dir_stack')
-    echohl WarningMsg | echo "Local dir stack is empty for this buffer" | echohl None
+    echohl WarningMsg | echo "Local dir stack is empty for this tab page" | echohl None
     return
   endif
 
@@ -113,7 +113,7 @@ function! dirstack#tpopd() abort
   endwhile
 
   if empty(t:dir_stack)
-    echohl WarningMsg | echo "Local dir stack is empty for this buffer" | echohl None
+    echohl WarningMsg | echo "Local dir stack is empty for this tab page" | echohl None
     return
   endif
 
