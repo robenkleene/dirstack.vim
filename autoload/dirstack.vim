@@ -8,10 +8,6 @@ function! dirstack#pushd(dir) abort
 
   let l:dir = simplify(fnamemodify(a:dir, ':p'))
   let l:top = empty(g:dir_stack) ? "" : g:dir_stack[-1]
-  " Don't add dups
-  if l:top ==# l:dir
-    return
-  endif
 
   call add(g:dir_stack, l:dir)
 
@@ -30,10 +26,6 @@ function! dirstack#lpushd(dir) abort
 
   let l:dir = simplify(fnamemodify(a:dir, ':p'))
   let l:top = empty(b:dir_stack) ? "" : b:dir_stack[-1]
-  " Don't add dups
-  if l:top ==# l:dir
-    return
-  endif
 
   call add(b:dir_stack, l:dir)
 
@@ -52,10 +44,6 @@ function! dirstack#tpushd(dir) abort
 
   let l:dir = simplify(fnamemodify(a:dir, ':p'))
   let l:top = empty(t:dir_stack) ? "" : t:dir_stack[-1]
-  " Don't add dups
-  if l:top ==# l:dir
-    return
-  endif
 
   call add(t:dir_stack, l:dir)
 
@@ -79,11 +67,12 @@ function! dirstack#popd() abort
     return
   endif
 
-  let l:dir = g:dir_stack[-1]
+  let l:dir = remove(g:dir_stack, -1)
+  let l:cwd = simplify(fnamemodify(getcwd(), ':p'))
   execute 'cd ' . fnameescape(l:dir)
   " The cd will add this dir to the stack so remove it to prevent the pop from
   " re-adding to the stack
-  if l:dir == g:dir_stack[-1]
+  if l:cwd == g:dir_stack[-1]
     call remove(g:dir_stack, -1)
   endif
 endfunction
@@ -103,11 +92,12 @@ function! dirstack#lpopd() abort
     return
   endif
 
-  let l:dir = b:dir_stack[-1]
+  let l:dir = remove(b:dir_stack, -1)
+  let l:cwd = simplify(fnamemodify(getcwd(), ':p'))
   execute 'lcd ' . fnameescape(l:dir)
   " The cd will add this dir to the stack so remove it to prevent the pop from
   " re-adding to the stack
-  if l:dir == b:dir_stack[-1]
+  if l:cwd == b:dir_stack[-1]
     call remove(b:dir_stack, -1)
   endif
 endfunction
@@ -127,11 +117,12 @@ function! dirstack#tpopd() abort
     return
   endif
 
-  let l:dir = t:dir_stack[-1]
+  let l:dir = remove(t:dir_stack, -1)
+  let l:cwd = simplify(fnamemodify(getcwd(), ':p'))
   execute 'tcd ' . fnameescape(l:dir)
   " The cd will add this dir to the stack so remove it to prevent the pop from
   " re-adding to the stack
-  if l:dir == t:dir_stack[-1]
+  if l:cwd == t:dir_stack[-1]
     call remove(t:dir_stack, -1)
   endif
 endfunction
