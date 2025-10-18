@@ -8,7 +8,7 @@ command! Popd call dirstack#popd()
 
 augroup DirStack
   autocmd!
-  autocmd DirChangedPre global call dirstack#pushd(getcwd(), v:event.directory)
-  autocmd DirChangedPre window call dirstack#lpushd(getcwd(), v:event.directory)
-  autocmd DirChangedPre tabpage call dirstack#tpushd(getcwd(), v:event.directory)
+  autocmd DirChangedPre global call dirstack#pushd(getcwd())
+  autocmd DirChangedPre window call dirstack#lpushd(getcwd())
+  autocmd DirChangedPre tabpage call dirstack#tpushd(getcwd())
 augroup END

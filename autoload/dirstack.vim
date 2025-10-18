@@ -1,4 +1,4 @@
-function! dirstack#pushd(dir, new = "") abort
+function! dirstack#pushd(dir) abort
   if empty(a:dir)
     return
   endif
@@ -13,20 +13,6 @@ function! dirstack#pushd(dir, new = "") abort
     return
   endif
 
-  " If going back to top directory pop and do nothing
-  " This treats going back to a directory as a manual pop, so `cd -` is
-  " treated as a pop and a subsequent `:Popd` will then go back further in
-  " history
-  " Disabling this to match `zsh` behavior, which puts the new directory on
-  " the stack
-  " if !empty(a:new)
-  "   let l:new = simplify(fnamemodify(a:new, ':p'))
-  "   if l:top ==# l:new
-  "     call remove(g:dir_stack, -1)
-  "     return
-  "   endif
-  " endif
-
   call add(g:dir_stack, l:dir)
 
   if len(g:dir_stack) > 20
@@ -34,7 +20,7 @@ function! dirstack#pushd(dir, new = "") abort
   endif
 endfunction
 
-function! dirstack#lpushd(dir, new = "") abort
+function! dirstack#lpushd(dir) abort
   if empty(a:dir)
     return
   endif
@@ -49,20 +35,6 @@ function! dirstack#lpushd(dir, new = "") abort
     return
   endif
 
-  " If going back to top directory pop and do nothing
-  " This treats going back to a directory as a manual pop, so `cd -` is
-  " treated as a pop and a subsequent `:Popd` will then go back further in
-  " history
-  " Disabling this to match `zsh` behavior, which puts the new directory on
-  " the stack
-  " if !empty(a:new)
-  "   let l:new = simplify(fnamemodify(a:new, ':p'))
-  "   if l:top ==# l:new
-  "     call remove(b:dir_stack, -1)
-  "     return
-  "   endif
-  " endif
-
   call add(b:dir_stack, l:dir)
 
   if len(b:dir_stack) > 20
@@ -70,7 +42,7 @@ function! dirstack#lpushd(dir, new = "") abort
   endif
 endfunction
 
-function! dirstack#tpushd(dir, new = "") abort
+function! dirstack#tpushd(dir) abort
   if empty(a:dir)
     return
   endif
@@ -84,18 +56,6 @@ function! dirstack#tpushd(dir, new = "") abort
   if l:top ==# l:dir
     return
   endif
-
-  " If going back to top directory pop and do nothing
-  " This treats going back to a directory as a manual pop, so `cd -` is
-  " treated as a pop and a subsequent `:Popd` will then go back further in
-  " history
-  " if !empty(a:new)
-  "   let l:new = simplify(fnamemodify(a:new, ':p'))
-  "   if l:top ==# l:new
-  "     call remove(t:dir_stack, -1)
-  "     return
-  "   endif
-  " endif
 
   call add(t:dir_stack, l:dir)
 
@@ -119,8 +79,6 @@ function! dirstack#popd() abort
     return
   endif
 
-  " Don't remove on a pop, `pushd` removes, if a remove here the destination
-  " will get re-added to the stack
   let l:dir = g:dir_stack[-1]
   execute 'cd ' . fnameescape(l:dir)
   " The cd will add this dir to the stack so remove it to prevent the pop from
@@ -145,8 +103,6 @@ function! dirstack#lpopd() abort
     return
   endif
 
-  " Don't remove on a pop, `pushd` removes, if a remove here the destination
-  " will get re-added to the stack
   let l:dir = b:dir_stack[-1]
   execute 'lcd ' . fnameescape(l:dir)
   " The cd will add this dir to the stack so remove it to prevent the pop from
@@ -171,8 +127,6 @@ function! dirstack#tpopd() abort
     return
   endif
 
-  " Don't remove on a pop, `pushd` removes, if a remove here the destination
-  " will get re-added to the stack
   let l:dir = t:dir_stack[-1]
   execute 'tcd ' . fnameescape(l:dir)
   " The cd will add this dir to the stack so remove it to prevent the pop from
