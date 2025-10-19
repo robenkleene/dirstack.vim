@@ -17,4 +17,4 @@ A directory stack for Vim like in [Bash](https://www.gnu.org/software/bash/manua
 - `:Tpopd`: Pop and `:tcd`
 - `:Tdirstack`: Echo local stack
 
-The plugin also hooks the `DirChanged` event and records the previous directory automatically when the working directory changes.
+The plugin tracks working directory changes automatically (so there's no `:Pushd` command) during the `DirChangedPre` event.
